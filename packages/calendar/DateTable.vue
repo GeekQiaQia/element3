@@ -8,7 +8,7 @@ import {
   getI18nSettings,
   validateRangeInOneMonth
 } from 'element-ui/src/utils/date-util'
-import { ref, computed, inject ,getCurrentInstance, toRefs,h } from 'vue'
+import { ref, computed, inject ,getCurrentInstance, toRefs } from 'vue'
 
 
 
@@ -195,7 +195,7 @@ export default {
       }
     });
 
-    return ()=>{
+      return ()=>{
         const instance =getCurrentInstance();
       
     const thead = hideHeader.value ? null : (
@@ -205,7 +205,7 @@ export default {
         ))}
       </thead>
     )
-    return h(
+    return (
       <table
         class={{
           'el-calendar-table': true,

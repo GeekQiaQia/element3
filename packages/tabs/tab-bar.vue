@@ -1,12 +1,15 @@
 <template>
   <div
     class="el-tabs__active-bar"
-    :class="`is-${rootTabs.tabPosition}`"
+    :class="`is-${tabPosition}`"
     :style="barStyle"
   ></div>
 </template>
 <script>
 import { arrayFind } from 'element-ui/src/utils/util'
+
+import { computed, inject, toRefs, ref,getCurrentInstance,unref } from 'vue'
+
 export default {
   name: 'TabBar',
 
@@ -14,16 +17,43 @@ export default {
     tabs: Array
   },
 
-  inject: ['rootTabs'],
+  // inject: ['rootTabs'],
+setup(props,ctx){
 
-  computed: {
-    barStyle: {
-      get() {
-        const style = {}
+  const {tabs}=toRefs(props);
+  console.log(tabs);
+
+  const barStyle=useBarStyle(tabs);
+
+  const  tabPosition=ref(getTabPosition());
+  console.log(tabPosition);
+  return {
+      barStyle,
+      tabPosition
+    }
+}
+
+}
+
+function getTabPosition(){
+   const rootTabs =inject('rootTabs',{});
+
+   let tabPosition=rootTabs.type.props.tabPosition
+ 
+   return tabPosition.default
+}
+
+const useBarStyle=(tabs)=>{
+
+   const tabPosition= getTabPosition()
+  const barStyle=computed({
+    get(){
+       const style = {}
         let offset = 0
         let tabSize = 0
+      
         const sizeName =
-          ['top', 'bottom'].indexOf(this.rootTabs.tabPosition) !== -1
+          ['top', 'bottom'].indexOf( tabPosition ) !== -1
             ? 'width'
             : 'height'
         const sizeDir = sizeName === 'width' ? 'x' : 'y'
@@ -32,9 +62,12 @@ export default {
             .toLowerCase()
             .replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
         }
-        this.tabs.every((tab, index) => {
+        tabs.value.every((tab, index) => {
+          let { parent } = getCurrentInstance()
+          console.log(getCurrentInstance());
           const $el = arrayFind(
-            this.$parent.$refs.tabs || [],
+            parent.$refs.tabs || [],
+
             (t) => t.id.replace('tab-', '') === tab.paneName
           )
           if (!$el) {
@@ -47,7 +80,7 @@ export default {
           } else {
             tabSize = $el[`client${firstUpperCase(sizeName)}`]
             const tabStyles = window.getComputedStyle($el)
-            if (sizeName === 'width' && this.tabs.length > 1) {
+            if (sizeName === 'width' && tabs.value.length > 1) {
               tabSize -=
                 parseFloat(tabStyles.paddingLeft) +
                 parseFloat(tabStyles.paddingRight)
@@ -65,9 +98,10 @@ export default {
         style.msTransform = transform
         style.webkitTransform = transform
 
-        return style
-      }
+        return style;
     }
-  }
+  })
+  return barStyle;
+
 }
 </script>

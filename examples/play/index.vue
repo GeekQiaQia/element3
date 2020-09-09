@@ -1,18 +1,22 @@
 <template>
-  <el-calendar>
-  <!-- 这里使用的是 2.5 slot 语法，对于新项目请使用 2.6 slot 语法-->
-  <template
-    v-slot:dateCell>
-
-    <p>{{slotProps}}</p>
-    <!-- <p :class="data.isSelected ? 'is-selected' : ''">
-      {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected ? '✔️' : ''}}{{date}}
-    </p> -->
-  </template>
-</el-calendar>
+  <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+    <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
+    <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+    <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+    <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+  </el-tabs>
 </template>
-<style>
-  .is-selected {
-    color: #1989FA;
-  }
-</style>
+<script>
+  export default {
+    data() {
+      return {
+        activeName: 'first'
+      };
+    },
+    methods: {
+      handleClick(tab, event) {
+        console.log(tab, event);
+      }
+    }
+  };
+</script>
