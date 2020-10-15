@@ -5,9 +5,7 @@ import {
   onMounted,
   getCurrentInstance,
   inject,
-  nextTick,
-  reactive,
-  watchEffect
+  nextTick
 } from 'vue'
 import { useEmitter } from 'element-ui/src/use/emitter'
 import { usePropUtils } from 'element-ui/src/use/prop-utils'
@@ -17,18 +15,11 @@ export function useModel() {
   const { emit, props } = getCurrentInstance()
   const elCheckboxGroup = inject('elCheckboxGroup', { props: {} })
   const { dispatch } = useEmitter()
-  const state = reactive({
-    modelValue: null
-    // If the parent element is ChceckboxGroup use its modelValue
-  })
-
-  watchEffect(() => {
-    state.modelValue = elCheckboxGroup.props.modelValue || props.modelValue
-  })
 
   const model = computed({
     get() {
-      return state.modelValue
+      const modelValue = elCheckboxGroup.props.modelValue || props.modelValue // If the parent element is ChceckboxGroup use its modelValue
+      return modelValue
       // BUG: if the Checkbox list and modelValue are an object, this causes the object element to be deleted.
       // Resolve: `isArray(modelValue) ? [...modelValue] : modelValue`, but doing so will invalidate the `checked` prop.
     },
@@ -41,13 +32,10 @@ export function useModel() {
         labelIndex !== -1 &&
           checked === false &&
           modelValue.splice(labelIndex, 1)
-        state.modelValue = modelValue
         emit('update:modelValue', modelValue)
         dispatch('update:modelValue', modelValue)
       } else {
-        const modelValue = checked ? props.trueLabel : props.falseLabel
-        state.modelValue = modelValue
-        emit('update:modelValue', modelValue)
+        emit('update:modelValue', checked ? props.trueLabel : props.falseLabel)
       }
     }
   })

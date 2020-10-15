@@ -143,8 +143,6 @@ ComponentNames.forEach((name) => {
       'collapse',
       'collapse-item',
       'message-box',
-      'tabs',
-      'tab-pane',
       'color-picker',
       'cascader',
       'cascader-panel'
